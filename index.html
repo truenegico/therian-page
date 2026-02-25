@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$THERIAN — Live Like An Animal</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Bebas+Neue&family=Share+Tech+Mono&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080808;
+    --wolf: #1a1a2e;
+    --neon: #00ff88;
+    --red: #ff2244;
+    --orange: #ff6b00;
+    --white: #f0f0f0;
+    --grey: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* === HERO === */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 50% 0%, #1a1a2e 0%, #080808 70%);
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    font-family: 'Black Ops One', cursive;
+    font-size: clamp(120px, 25vw, 300px);
+    color: rgba(0,255,136,0.03);
+    letter-spacing: -10px;
+    pointer-events: none;
+    white-space: nowrap;
+    animation: driftBg 20s ease-in-out infinite;
+  }
+
+  @keyframes driftBg {
+    0%, 100% { transform: translateX(-5%) rotate(-2deg); }
+    50% { transform: translateX(5%) rotate(2deg); }
+  }
+
+  .paws-rain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .paw {
+    position: absolute;
+    opacity: 0;
+    animation: fallPaw linear infinite;
+  }
+
+  @keyframes fallPaw {
+    0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.25; }
+    90% { opacity: 0.08; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .wolf-emoji {
+    font-size: clamp(80px, 15vw, 140px);
+    animation: wolfPulse 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(0,255,136,0.5));
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes wolfPulse {
+    0%, 100% { transform: scale(1) rotate(-3deg); }
+    50% { transform: scale(1.07) rotate(3deg); }
+  }
+
+  .ticker {
+    font-family: 'Black Ops One', cursive;
+    font-size: clamp(70px, 18vw, 180px);
+    color: var(--neon);
+    letter-spacing: 4px;
+    line-height: 0.9;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    text-shadow:
+      0 0 20px rgba(0,255,136,0.8),
+      0 0 60px rgba(0,255,136,0.4),
+      0 0 120px rgba(0,255,136,0.2);
+    animation: glitch 5s infinite;
+  }
+
+  @keyframes glitch {
+    0%, 94%, 100% {
+      text-shadow: 0 0 20px rgba(0,255,136,0.8), 0 0 60px rgba(0,255,136,0.4);
+      transform: none;
+    }
+    95% { transform: translate(-3px, 0); text-shadow: 3px 0 #ff2244, -3px 0 #00ff88; }
+    96% { transform: translate(3px, 0); text-shadow: -3px 0 #ff2244, 3px 0 #00ff88; }
+    97% { transform: none; }
+  }
+
+  .tagline {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(16px, 3.5vw, 32px);
+    color: var(--orange);
+    text-align: center;
+    margin: 0.5rem 0 2rem;
+    position: relative;
+    z-index: 2;
+    animation: fadeInUp 1s 0.5s both;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-desc {
+    max-width: 580px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--grey);
+    line-height: 1.8;
+    position: relative;
+    z-index: 2;
+    animation: fadeInUp 1s 0.8s both;
+  }
+
+  .hero-desc span { color: var(--neon); }
+
+  .cta-btn {
+    background: var(--neon);
+    color: var(--black);
+    font-family: 'Black Ops One', cursive;
+    font-size: 1.1rem;
+    padding: 1rem 3rem;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 2.5rem;
+    position: relative;
+    z-index: 2;
+    animation: fadeInUp 1s 1.1s both;
+  }
+
+  .cta-btn:hover {
+    transform: scale(1.06) translateY(-3px);
+    box-shadow: 0 15px 50px rgba(0,255,136,0.4);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(136,136,136,0.5);
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    animation: bounce 2s infinite;
+    z-index: 2;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  /* === MARQUEE === */
+  .marquee-wrap {
+    overflow: hidden;
+    background: var(--neon);
+    padding: 0.55rem 0;
+  }
+
+  .marquee-track {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 28s linear infinite;
+  }
+
+  .marquee-track span {
+    font-family: 'Black Ops One', cursive;
+    font-size: 0.95rem;
+    color: var(--black);
+    padding: 0 2.5rem;
+    letter-spacing: 2px;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* === STATS === */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .stat-card {
+    background: var(--black);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    transition: background 0.3s;
+  }
+
+  .stat-card:hover { background: rgba(0,255,136,0.05); }
+
+  .stat-number {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.8rem;
+    color: var(--neon);
+    display: block;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--grey);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+    display: block;
+  }
+
+  /* === SECTION BASE === */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 5px;
+    color: var(--neon);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: 'Black Ops One', cursive;
+    font-size: clamp(34px, 6.5vw, 76px);
+    line-height: 0.95;
+    margin-bottom: 2rem;
+  }
+
+  /* === ABOUT === */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+  .about-text p {
+    color: var(--grey);
+    line-height: 1.9;
+    margin-bottom: 1.1rem;
+    font-size: 0.9rem;
+  }
+
+  .about-text p strong { color: var(--white); }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .feature-list li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.4rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.015);
+  }
+
+  .feature-list li:hover {
+    border-color: var(--neon);
+    background: rgba(0,255,136,0.05);
+    transform: translateX(6px);
+  }
+
+  .feature-list .icon { font-size: 1.4rem; flex-shrink: 0; }
+
+  .feature-list .text strong {
+    display: block;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    color: var(--white);
+  }
+
+  .feature-list .text span { font-size: 0.78rem; color: var(--grey); }
+
+  /* === MANIFESTO === */
+  .manifesto {
+    background: var(--red);
+    padding: 5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .manifesto::before {
+    content: '🐺';
+    position: absolute;
+    font-size: 280px;
+    opacity: 0.06;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .manifesto-text {
+    font-family: 'Black Ops One', cursive;
+    font-size: clamp(22px, 5vw, 58px);
+    line-height: 1.25;
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .manifesto-text em {
+    font-style: normal;
+    border-bottom: 3px solid rgba(255,255,255,0.45);
+  }
+
+  /* === TOKENOMICS === */
+  .tokenomics-section {
+    background: var(--wolf);
+    border-top: 1px solid rgba(0,255,136,0.1);
+    border-bottom: 1px solid rgba(0,255,136,0.1);
+  }
+
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.04);
+    margin-top: 3rem;
+  }
+
+  .token-item {
+    background: var(--wolf);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .token-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--neon);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+
+  .token-item:hover { background: rgba(0,255,136,0.07); }
+  .token-item:hover::after { transform: scaleX(1); }
+
+  .token-pct {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.4rem;
+    color: var(--neon);
+    display: block;
+  }
+
+  .token-name {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .token-desc { font-size: 0.72rem; color: rgba(136,136,136,0.55); margin-top: 0.5rem; }
+
+  /* === HOW TO BUY === */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
+    margin-top: 3rem;
+    counter-reset: steps;
+  }
+
+  .step-card {
+    border: 1px solid rgba(255,255,255,0.07);
+    padding: 2rem 1.5rem;
+    background: rgba(255,255,255,0.02);
+    position: relative;
+    transition: all 0.3s;
+    counter-increment: steps;
+  }
+
+  .step-card::before {
+    content: counter(steps, decimal-leading-zero);
+    font-family: 'Bebas Neue', cursive;
+    font-size: 4rem;
+    color: rgba(0,255,136,0.07);
+    position: absolute;
+    top: 0.5rem; right: 1rem;
+    line-height: 1;
+  }
+
+  .step-card:hover {
+    border-color: rgba(0,255,136,0.3);
+    background: rgba(0,255,136,0.04);
+    transform: translateY(-4px);
+  }
+
+  .step-icon { font-size: 1.8rem; margin-bottom: 1rem; display: block; }
+
+  .step-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.15rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.6rem;
+    color: var(--white);
+  }
+
+  .step-desc { font-size: 0.78rem; color: var(--grey); line-height: 1.7; }
+  .step-desc span { color: var(--neon); }
+
+  /* === COMMUNITY CTA === */
+  .community-cta {
+    background: linear-gradient(135deg, #0d1a12 0%, #1a1a2e 100%);
+    border-top: 1px solid rgba(0,255,136,0.1);
+    border-bottom: 1px solid rgba(0,255,136,0.1);
+    padding: 5rem 2rem;
+    text-align: center;
+  }
+
+  .community-cta .section-title { margin-bottom: 1rem; }
+
+  .community-cta p {
+    color: var(--grey);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .community-cta p span { color: var(--neon); }
+
+  .x-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: var(--white);
+    color: var(--black);
+    font-family: 'Black Ops One', cursive;
+    font-size: 1rem;
+    padding: 1rem 2.5rem;
+    letter-spacing: 2px;
+    text-decoration: none;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transition: all 0.2s;
+  }
+
+  .x-btn:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255,255,255,0.15);
+  }
+
+  .x-btn svg { width: 20px; height: 20px; fill: var(--black); flex-shrink: 0; }
+
+  /* === CONTRACT === */
+  .contract-box {
+    background: rgba(0,255,136,0.04);
+    border: 1px solid rgba(0,255,136,0.15);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin-top: 4rem;
+  }
+
+  .contract-label {
+    font-size: 0.68rem;
+    letter-spacing: 4px;
+    color: var(--grey);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .contract-addr {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.65rem, 1.8vw, 0.95rem);
+    color: var(--neon);
+    word-break: break-all;
+    letter-spacing: 1.5px;
+  }
+
+  .contract-note { margin-top: 1rem; font-size: 0.72rem; color: rgba(136,136,136,0.5); }
+
+  /* === DIVIDER === */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,255,136,0.25), transparent);
+  }
+
+  /* === FOOTER === */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding: 3rem 2rem;
+    text-align: center;
+    font-size: 0.72rem;
+    color: rgba(136,136,136,0.6);
+    letter-spacing: 1.5px;
+    line-height: 2;
+  }
+
+  footer span { color: var(--neon); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">THERIAN</div>
+  <div class="paws-rain" id="pawsRain"></div>
+
+  <div class="wolf-emoji">🐺</div>
+  <div class="ticker">$THERIAN</div>
+  <div class="tagline">Therians are invading our World. Why not live like one?</div>
+  <p class="hero-desc">
+    The most viral phenomenon of 2026 is now a token.<br>
+    <span>$THERIAN</span> — on Solana. No tax. Fair launch. LP burned.<br>
+    Run on four paws. Buy. Howl to the moon. 🌙
+  </p>
+  <a href="https://pump.fun" target="_blank" class="cta-btn">🐺 BUY $THERIAN ON PUMP.FUN</a>
+  <div class="scroll-hint">▼ SCROLL ▼</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>🐺 $THERIAN</span>
+    <span>🐾 VIRAL MEME OF 2026</span>
+    <span>🔥 ON SOLANA</span>
+    <span>🌙 NO TAX — FAIR LAUNCH</span>
+    <span>🐺 LP BURNED</span>
+    <span>🐾 RUN ON FOUR PAWS</span>
+    <span>🔥 BUY ON PUMP.FUN</span>
+    <span>🌙 I AM THE WOLF</span>
+    <span>🐺 $THERIAN</span>
+    <span>🐾 VIRAL MEME OF 2026</span>
+    <span>🔥 ON SOLANA</span>
+    <span>🌙 NO TAX — FAIR LAUNCH</span>
+    <span>🐺 LP BURNED</span>
+    <span>🐾 RUN ON FOUR PAWS</span>
+    <span>🔥 BUY ON PUMP.FUN</span>
+    <span>🌙 I AM THE WOLF</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-card">
+    <span class="stat-number">1B</span>
+    <span class="stat-label">Total Supply</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">0%</span>
+    <span class="stat-label">Buy Tax</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">0%</span>
+    <span class="stat-label">Sell Tax</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">🔥</span>
+    <span class="stat-label">LP Burned</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">SOL</span>
+    <span class="stat-label">Network</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section">
+  <div class="about-grid">
+    <div class="about-text">
+      <p class="section-label">// WHAT IS $THERIAN</p>
+      <h2 class="section-title">THE<br>WILDEST<br>MEME</h2>
+      <p><strong>Therians</strong> are the viral phenomenon of February 2026 — young people who identify as animals, running on all fours with wolf masks, howling in public parks. They have completely broken the internet.</p>
+      <p>Trending on <strong>TikTok, X and Instagram</strong> across Argentina, Mexico, Spain, Colombia, the US and beyond. Major newspapers are covering it. Everyone is talking about it right now.</p>
+      <p>We captured that energy in a token. <strong>$THERIAN</strong> is the memecoin of the most controversial and viral moment of 2026. This isn't just a coin — it's a pack.</p>
+    </div>
+    <ul class="feature-list">
+      <li>
+        <span class="icon">🐺</span>
+        <div class="text">
+          <strong>100% CURRENT MEME</strong>
+          <span>Trending THIS week. Perfect timing to launch.</span>
+        </div>
+      </li>
+      <li>
+        <span class="icon">🌍</span>
+        <div class="text">
+          <strong>TRENDING IN 10+ COUNTRIES</strong>
+          <span>Argentina, Mexico, Spain, Colombia, US and more.</span>
+        </div>
+      </li>
+      <li>
+        <span class="icon">⚡</span>
+        <div class="text">
+          <strong>SOLANA SPEED</strong>
+          <span>Lightning fast transactions, minimal fees.</span>
+        </div>
+      </li>
+      <li>
+        <span class="icon">🌙</span>
+        <div class="text">
+          <strong>FAIR LAUNCH</strong>
+          <span>No presale, no team wallet. Everyone on equal footing.</span>
+        </div>
+      </li>
+      <li>
+        <span class="icon">🔥</span>
+        <div class="text">
+          <strong>LP BURNED FOREVER</strong>
+          <span>Liquidity locked permanently. No rug possible.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<div class="manifesto">
+  <p class="manifesto-text">
+    "THERIANS ARE<br>
+    <em>INVADING OUR WORLD</em>.<br>
+    WHY NOT BE ONE<br>
+    AND <em>LIVE LIKE AN ANIMAL</em>?"
+  </p>
+</div>
+
+<!-- TOKENOMICS -->
+<section class="tokenomics-section">
+  <div class="section">
+    <p class="section-label">// TOKENOMICS</p>
+    <h2 class="section-title">SIMPLE.<br>CLEAN.<br>SAVAGE.</h2>
+    <div class="token-grid">
+      <div class="token-item">
+        <span class="token-pct">1,000,000,000</span>
+        <div class="token-name">Total Supply</div>
+        <div class="token-desc">1 billion $THERIAN tokens</div>
+      </div>
+      <div class="token-item">
+        <span class="token-pct">0%</span>
+        <div class="token-name">Buy Tax</div>
+        <div class="token-desc">No fees when you buy</div>
+      </div>
+      <div class="token-item">
+        <span class="token-pct">0%</span>
+        <div class="token-name">Sell Tax</div>
+        <div class="token-desc">No fees when you sell</div>
+      </div>
+      <div class="token-item">
+        <span class="token-pct">100%</span>
+        <div class="token-name">Fair Launch</div>
+        <div class="token-desc">No presale, no insiders</div>
+      </div>
+      <div class="token-item">
+        <span class="token-pct">🔥</span>
+        <div class="token-name">LP Burned</div>
+        <div class="token-desc">Liquidity locked forever</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO BUY -->
+<div class="divider"></div>
+<section class="section">
+  <p class="section-label">// HOW TO BUY</p>
+  <h2 class="section-title">JOIN<br>THE<br>PACK</h2>
+  <div class="steps-grid">
+    <div class="step-card">
+      <span class="step-icon">📱</span>
+      <div class="step-title">GET A WALLET</div>
+      <p class="step-desc">Download <span>Phantom</span> or <span>Solflare</span>. Create your wallet and store your seed phrase safely.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-icon">💰</span>
+      <div class="step-title">GET SOME SOL</div>
+      <p class="step-desc">Buy <span>$SOL</span> on Coinbase, Binance or Kraken and send it to your wallet.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-icon">🔗</span>
+      <div class="step-title">GO TO PUMP.FUN</div>
+      <p class="step-desc">Visit <span>pump.fun</span>, connect your wallet and search for <span>$THERIAN</span> using the contract address below.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-icon">🐺</span>
+      <div class="step-title">BUY & HOWL</div>
+      <p class="step-desc">Swap your SOL for <span>$THERIAN</span>. Welcome to the pack. Now howl 🌙</p>
+    </div>
+  </div>
+
+  <!-- CONTRACT -->
+  <div class="contract-box">
+    <p class="contract-label">Contract Address — Solana</p>
+    <p class="contract-addr">COMING SOON — CONTRACT ADDRESS WILL BE POSTED HERE AT LAUNCH</p>
+    <p class="contract-note">⚠️ Always verify the CA through our official X community before buying.</p>
+  </div>
+</section>
+
+<!-- COMMUNITY CTA -->
+<div class="community-cta">
+  <p class="section-label" style="text-align:center">// COMMUNITY</p>
+  <h2 class="section-title" style="text-align:center">THE<br>PACK</h2>
+  <p>
+    Join the <span>$THERIAN</span> community on X.<br>
+    Updates, memes, launch info and more.<br>
+    The wolf pack is waiting for you.
+  </p>
+  <a href="https://x.com/i/communities/2026641779789869296/" target="_blank" class="x-btn">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.736-8.857L1.254 2.25H8.08l4.261 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    JOIN THE THERIAN COMMUNITY
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p><span>$THERIAN</span> — The memecoin of the most viral meme of 2026 🐺</p>
+  <br>
+  <p>$THERIAN is a community meme token. Not financial advice.<br>
+  No guaranteed value. DYOR. Only invest what you can afford to lose.</p>
+</footer>
+
+<script>
+  // PAWS RAIN
+  const container = document.getElementById('pawsRain');
+  const emojis = ['🐾','🐺','🌙','🐾','🐾'];
+
+  function spawnPaw() {
+    const el = document.createElement('div');
+    el.className = 'paw';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = (Math.random() * 1.4 + 0.7) + 'rem';
+    const d = Math.random() * 8 + 7;
+    el.style.animationDuration = d + 's';
+    el.style.animationDelay = (Math.random() * 3) + 's';
+    container.appendChild(el);
+    setTimeout(() => el.remove(), (d + 4) * 1000);
+  }
+
+  for (let i = 0; i < 12; i++) spawnPaw();
+  setInterval(spawnPaw, 700);
+
+  // SCROLL REVEAL
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.stat-card, .feature-list li, .token-item, .step-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
